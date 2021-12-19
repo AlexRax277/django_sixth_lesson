@@ -37,7 +37,7 @@ class StockSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         positions = validated_data.pop('positions')
         stock = super().update(instance, validated_data)
+        stock.positions.filter(stock_id=stock.id).delete()
         for pos in positions:
-            stock.positions.filter(product_id=pos['product']).delete()
             StockProduct.objects.update_or_create(stock=stock, **pos)
         return stock
